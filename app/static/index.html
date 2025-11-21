@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Questionário – Carreira em TI (100 perguntas)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="container">
+    <h1>Questionário de Carreira em TI</h1>
+    <p>Responda <strong>100 afirmações</strong> indicando seu nível de interesse:</p>
+    <ul class="legend">
+      <li><strong>1</strong> Nenhum Interesse</li>
+      <li><strong>2</strong> Pouco Interesse</li>
+      <li><strong>3</strong> Moderado</li>
+      <li><strong>4</strong> Interessado</li>
+      <li><strong>5</strong> Muito Interessado</li>
+    </ul>
+    <div id="progress" class="progress"><div id="progress-bar"></div></div>
+  </header>
+
+  <main class="container">
+    <form id="quizForm"></form>
+
+    <div class="actions">
+      <button id="submitBtn" type="button">Gerar Resultado</button>
+    </div>
+
+    <section id="results" class="results hidden"></section>
+  </main>
+
+  <footer class="container">
+    <p class="muted">Dica: acima de 70% indica forte afinidade; 50–70% afinidade moderada.</p>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

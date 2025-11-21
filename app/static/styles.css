@@ -1,0 +1,41 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: #111; background: #fafafa; }
+.container { max-width: 980px; margin: 0 auto; padding: 16px; }
+
+h1 { margin: 16px 0 8px; }
+p { margin: 0 0 12px; }
+.muted { color: #666; font-size: 0.95rem; }
+
+.legend { display: flex; gap: 12px; list-style: none; padding: 0; margin: 0 0 12px; color: #333; }
+.legend li { background: #fff; border: 1px solid #ddd; border-radius: 6px; padding: 6px 10px; }
+
+.progress { height: 10px; background: #eee; border-radius: 8px; overflow: hidden; margin: 8px 0 16px; position: sticky; top: 0; }
+#progress-bar { height: 100%; width: 0%; background: #4a90e2; transition: width 0.25s ease; }
+
+.question { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+.question h3 { font-size: 1.02rem; margin: 0 0 10px; font-weight: 600; }
+.scale { display: grid; grid-template-columns: repeat(5, minmax(120px, 1fr)); gap: 8px; }
+.scale label { display: flex; align-items: center; gap: 6px; border: 1px solid #ddd; border-radius: 8px; padding: 8px; background: #fff; cursor: pointer; user-select: none; }
+.scale input { margin: 0; }
+
+.badge { display: inline-block; padding: 2px 8px; border-radius: 999px; border: 1px solid #ddd; font-size: 0.78rem; color: #555; }
+
+.actions { position: sticky; bottom: 0; background: rgba(250,250,250,0.95); backdrop-filter: blur(4px); padding: 12px 0; }
+button { border: none; border-radius: 8px; padding: 12px 18px; font-weight: 600; cursor: pointer; background: #111; color: #fff; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.results { margin-top: 18px; }
+.hidden { display: none; }
+
+.grid { display: grid; gap: 12px; }
+@media (min-width: 860px) {
+  .grid { grid-template-columns: 1fr 1fr; }
+}
+
+.card { background: #fff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 14px; }
+.card h4 { margin: 0 0 8px; }
+
+.bar { height: 10px; background: #eee; border-radius: 999px; overflow: hidden; margin-top: 6px; }
+.bar > div { height: 100%; width: 0%; background: #4a90e2; transition: width 0.4s ease; }
+.kv { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.kv .value { font-weight: 700; }
