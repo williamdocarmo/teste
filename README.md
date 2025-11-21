@@ -1,8 +1,6 @@
-# Carreira em TI – Questionário (100 perguntas) com Export JSON
+# Carreira em TI – Questionário (100 perguntas, sem jargões) – Porta 8090
 
-App **FastAPI + HTML/JS** que aplica um questionário **Likert (1–5)** com **100 perguntas** e recomenda **áreas de TI** (Programação, Infraestrutura, Segurança, Dados, Design, Games) e um **perfil/arquétipo** (Analista, Construtor, Inovador, Comunicador).
-
-Agora com **botão para baixar um JSON** com o resultado completo (percentuais, rankings e resumo).
+App **FastAPI + HTML/JS** que aplica um questionário **Likert (1–5)** com **100 perguntas** (sem termos técnicos) e recomenda **áreas de TI** (Programação, Infraestrutura, Segurança, Dados, Design, Games) e um **perfil/arquétipo** (Analista, Construtor, Inovador, Comunicador). Inclui **exportação do resultado em JSON**.
 
 ## Rodando localmente (sem Docker)
 
@@ -10,19 +8,26 @@ Agora com **botão para baixar um JSON** com o resultado completo (percentuais, 
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install fastapi uvicorn
-uvicorn app.main:app --reload
+uvicorn app.main:app --host 0.0.0.0 --port 8090
 ```
 
-Abra: http://localhost:8000
+Abra: http://localhost:8090
 
 ## Docker
 
 ```bash
-docker build -t carreira-ti-100-json .
-docker run --rm -p 8000:8000 carreira-ti-100-json
+docker build -t carreira-ti-100-agnostico-8090 .
+docker run --rm -p 8090:8090 carreira-ti-100-agnostico-8090
 ```
 
-Acesse: http://localhost:8000
+Acesse: http://localhost:8090
+
+## Coolify
+
+- **Internal Port / Ports Exposes**: `8090`
+- **Ports Mappings**: deixe **vazio** (o proxy do Coolify cuida do 80/443) ou use `8090:8090`.
+- **Domain**: apenas o host (ex.: `teste.inteligencia.it`, sem `http://`).
+- Após o deploy, o Coolify emite o certificado TLS automaticamente.
 
 ## Endpoints
 
@@ -42,7 +47,7 @@ Acesse: http://localhost:8000
 ## Como funciona a “inteligência”
 
 - Cada pergunta pertence a **uma área** e a **um arquétipo**.
-- O resultado de cada categoria = **soma** das respostas 1..5.
-- O backend **normaliza em % (0–100)** com base na **quantidade de perguntas** por categoria.
+- O resultado de cada categoria = **soma** das respostas (1..5).
+- O backend **normaliza em % (0–100)** com base na quantidade de perguntas por categoria.
 - A resposta inclui **Top 3 Áreas**, **Ranking Completo** e **Perfil dominante**.
 - O frontend gera um **arquivo JSON** com toda a resposta do backend para você baixar.

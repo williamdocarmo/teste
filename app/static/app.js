@@ -153,7 +153,7 @@ function renderResults(payload) {
   jsonCard.appendChild(jsonTitle);
 
   const jsonDesc = document.createElement('p');
-  jsonDesc.textContent = 'Baixe um arquivo JSON com todos os percentuais, rankings e resumo para guardar, analisar ou compartilhar.';
+  jsonDesc.textContent = 'Baixe um arquivo JSON com todos os percentuais, rankings e resumo.';
   jsonCard.appendChild(jsonDesc);
 
   const jsonBtn = document.createElement('button');

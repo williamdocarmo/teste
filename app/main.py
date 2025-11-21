@@ -3,9 +3,9 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, conint
 from typing import List, Dict, Any
-from .questions import QUESTIONS, DOMAIN_LABELS_PT, PERSONA_LABELS_PT
+from app.questions import QUESTIONS, DOMAIN_LABELS_PT, PERSONA_LABELS_PT
 
-app = FastAPI(title="Carreira TI - Questionário (100 perguntas)")
+app = FastAPI(title="Carreira TI - Questionário (100 perguntas, sem jargões)")
 
 # Servir arquivos estáticos
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -20,6 +20,7 @@ def healthz():
 def get_questions():
     """
     Retorna a lista de perguntas com seus metadados (id, texto, domínio, arquétipo).
+    As perguntas evitam termos técnicos/jargões.
     """
     return {"questions": QUESTIONS, "domains": DOMAIN_LABELS_PT, "personas": PERSONA_LABELS_PT}
 
@@ -89,7 +90,7 @@ def score(answers: List[Answer]):
         "top_domains": domain_ranking[:3],
         "top_persona": persona_ranking[0] if persona_ranking else None,
         "interpretation": {
-            "hint": "Use os percentuais como direção: acima de 70% indica forte afinidade; 50–70% afinidade moderada; abaixo de 50% indica tema a explorar com calma."
+            "hint": "Acima de 70% = forte afinidade; 50–70% = moderada; abaixo de 50% = explorar com calma."
         }
     }
 
