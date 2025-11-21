@@ -3,19 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <title>🛰️ Carreira em TI – Scanner de Afinidades</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="theme-color" content="#0b0f1a"/>
   <link rel="stylesheet" href="/static/styles.css" />
+  <style>html{scroll-behavior:smooth}</style>
 </head>
 <body>
   <div class="stars"></div>
   <header class="container">
     <h1>🛰️ Scanner de Afinidades • Carreira em TI</h1>
     <p class="muted">Tema futurista · 100 afirmações · escala 1–5</p>
-    <div class="progress"><div id="progress-bar"></div></div>
+    <div class="progress" role="progressbar" aria-label="Progresso"><div id="progress-bar"></div></div>
   </header>
 
   <main class="container">
-    <section id="questionCard" class="question card hidden"></section>
+    <section id="questionCard" class="question card hidden" aria-live="polite"></section>
 
     <div class="controls">
       <button id="backBtn" type="button" class="ghost">← Voltar</button>
@@ -24,7 +26,7 @@
     <section id="results" class="results hidden"></section>
   </main>
 
-  <footer class="container">
+  <footer class="container footer-safe">
     <p class="muted">Escala: 1 Nenhum Interesse • 2 Pouco • 3 Moderado • 4 Interessado • 5 Muito Interessado</p>
   </footer>
 

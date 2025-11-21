@@ -1,4 +1,4 @@
-# Rótulos de categorias (PT)
+# Rótulos
 DOMAIN_LABELS_PT = {
     "programacao": "Programação",
     "infraestrutura": "Infraestrutura",
@@ -15,7 +15,6 @@ PERSONA_LABELS_PT = {
     "comunicador": "Comunicador (UX/Produto)",
 }
 
-# Persona predominante por domínio
 DOMAIN_PERSONA = {
     "programacao": "inovador",
     "infraestrutura": "construtor",
@@ -25,7 +24,6 @@ DOMAIN_PERSONA = {
     "games": "inovador",
 }
 
-# Distribuição alvo (soma = 100)
 DOMAIN_COUNTS = {
     "programacao": 17,
     "infraestrutura": 17,
@@ -35,8 +33,6 @@ DOMAIN_COUNTS = {
     "games": 16,
 }
 
-# As afirmações abaixo assumem que a pessoa NÃO conhece termos ou ferramentas técnicas.
-# O foco é o interesse natural, preferências cognitivas e estilo de trabalho.
 DOMAIN_ITEMS = {
     "programacao": [
         "Eu me animo em criar algo do zero que funcione na tela.",
@@ -173,7 +169,6 @@ DOMAIN_ITEMS = {
 }
 
 def _make_questions():
-    # Seleciona as primeiras N afirmações de cada domínio conforme DOMAIN_COUNTS.
     questions = []
     next_id = 1
     for domain, n in DOMAIN_COUNTS.items():

@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, conint
 from typing import List, Dict, Any
 from .questions import QUESTIONS, DOMAIN_LABELS_PT, PERSONA_LABELS_PT
 
-app = FastAPI(title="Carreira TI - Questionário (100 perguntas, tema futurista)")
+app = FastAPI(title="Carreira TI - Scanner (100 perguntas, tema futurista, mobile)")
 
 # Servir arquivos estáticos
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -18,9 +18,6 @@ def healthz():
 
 @app.get("/api/questions")
 def get_questions():
-    """
-    Retorna a lista de perguntas com seus metadados (id, texto, domínio, arquétipo).
-    """
     return {"questions": QUESTIONS, "domains": DOMAIN_LABELS_PT, "personas": PERSONA_LABELS_PT}
 
 
@@ -39,21 +36,16 @@ class ScoreResponse(BaseModel):
 
 @app.post("/api/score", response_model=ScoreResponse)
 def score(answers: List[Answer]):
-    # Índice rápido por id
     q_by_id = {q["id"]: q for q in QUESTIONS}
-
-    # Inicializa acumuladores
     domains = {key: 0 for key in DOMAIN_LABELS_PT.keys()}
     personas = {key: 0 for key in PERSONA_LABELS_PT.keys()}
     counts_domain = {key: 0 for key in DOMAIN_LABELS_PT.keys()}
     counts_persona = {key: 0 for key in PERSONA_LABELS_PT.keys()}
 
-    # Pré-contagem de itens por categoria (para normalização)
     for q in QUESTIONS:
         counts_domain[q["domain"]] += 1
         counts_persona[q["persona"]] += 1
 
-    # Soma das respostas
     for a in answers:
         q = q_by_id.get(a.id)
         if not q:
@@ -61,7 +53,6 @@ def score(answers: List[Answer]):
         domains[q["domain"]] += a.value
         personas[q["persona"]] += a.value
 
-    # Normalização (0..100)
     def normalize(raw: Dict[str, int], counts: Dict[str, int]) -> Dict[str, float]:
         norm = {}
         for k, v in raw.items():
@@ -72,7 +63,6 @@ def score(answers: List[Answer]):
     domain_norm = normalize(domains, counts_domain)
     persona_norm = normalize(personas, counts_persona)
 
-    # Rankings
     domain_ranking = sorted(
         [{"key": k, "label": DOMAIN_LABELS_PT[k], "score": domain_norm[k], "raw": domains[k], "questions": counts_domain[k]} for k in domain_norm],
         key=lambda x: x["score"],
@@ -88,9 +78,7 @@ def score(answers: List[Answer]):
     summary = {
         "top_domains": domain_ranking[:3],
         "top_persona": persona_ranking[0] if persona_ranking else None,
-        "interpretation": {
-            "hint": "Acima de 70%: forte afinidade. 50–70%: afinidade moderada. <50%: explorar com calma."
-        }
+        "interpretation": {"hint": "Acima de 70%: forte afinidade. 50–70%: moderada. <50%: explorar com calma."}
     }
 
     return ScoreResponse(

@@ -23,12 +23,15 @@ function updateProgress() {
   progressBar.style.width = `${pct}%`;
 }
 
+function focusCard() {
+  questionCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 function renderCurrentQuestion() {
   if (!QUESTIONS.length) return;
 
   if (currentIndex < 0) currentIndex = 0;
   if (currentIndex >= QUESTIONS.length) {
-    // terminou
     submitQuiz();
     return;
   }
@@ -39,7 +42,7 @@ function renderCurrentQuestion() {
 
   const meta = document.createElement('div');
   meta.style.marginBottom = '8px';
-  meta.innerHTML = `<span class="badge">${DOMAINS[q.domain]}</span> · <span class="badge">${PERSONAS[q.persona]}</span> · <span class="badge">${currentIndex + 1}/${QUESTIONS.length}</span>`;
+  meta.innerHTML = `<span class="badge">${DOMAINS[q.domain]}</span> <span class="badge">${PERSONAS[q.persona]}</span> <span class="badge">${currentIndex + 1}/${QUESTIONS.length}</span>`;
   questionCard.appendChild(meta);
 
   const h3 = document.createElement('h3');
@@ -61,19 +64,17 @@ function renderCurrentQuestion() {
     label.appendChild(input);
     label.appendChild(span);
 
-    // estado selecionado se já respondeu
     if (answers.has(q.id) && answers.get(q.id) === v) {
       input.checked = true;
     }
 
-    // ao selecionar, salva e vai para a próxima
     input.addEventListener('change', () => {
       answers.set(q.id, v);
       updateProgress();
-      // pequeno delay para feedback visual
       setTimeout(() => {
         currentIndex += 1;
         renderCurrentQuestion();
+        focusCard();
       }, 120);
     });
 
@@ -81,8 +82,6 @@ function renderCurrentQuestion() {
   }
 
   questionCard.appendChild(scale);
-
-  // controles
   backBtn.disabled = currentIndex === 0;
 }
 
@@ -96,6 +95,7 @@ async function loadQuestions() {
   answers.clear();
   updateProgress();
   renderCurrentQuestion();
+  focusCard();
 }
 
 function renderBars(container, items, title) {
@@ -160,7 +160,7 @@ function renderResults(payload) {
   `;
   resultsEl.appendChild(summary);
 
-  // Botão para download do JSON com o resultado completo
+  // Export JSON
   const jsonCard = document.createElement('div');
   jsonCard.className = 'card';
   const jsonTitle = document.createElement('h4');
@@ -191,11 +191,10 @@ function renderResults(payload) {
 
   resultsEl.appendChild(jsonCard);
 
-  window.scrollTo({ top: resultsEl.offsetTop - 20, behavior: 'smooth' });
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 async function submitQuiz() {
-  // montar array [{}] na ordem das perguntas
   const payload = [];
   for (const q of QUESTIONS) {
     const v = answers.get(q.id);
@@ -203,6 +202,7 @@ async function submitQuiz() {
       alert("Há perguntas sem resposta. Use Voltar para completar.");
       currentIndex = QUESTIONS.findIndex(qq => !answers.get(qq.id));
       renderCurrentQuestion();
+      focusCard();
       return;
     }
     payload.push({ id: q.id, value: Number(v) });
@@ -215,7 +215,6 @@ async function submitQuiz() {
       body: JSON.stringify(payload)
     });
     const scored = await res.json();
-    // esconder cartão de pergunta e mostrar resultados
     questionCard.classList.add('hidden');
     resultsEl.classList.remove('hidden');
     renderResults(scored);
@@ -229,6 +228,7 @@ backBtn.addEventListener('click', () => {
   if (currentIndex > 0) {
     currentIndex -= 1;
     renderCurrentQuestion();
+    focusCard();
   }
 });
 
