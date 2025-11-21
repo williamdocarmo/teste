@@ -1,4 +1,4 @@
-# Rótulos de categorias (PT)
+# Rótulos
 DOMAIN_LABELS_PT = {
     "programacao": "Programação",
     "infraestrutura": "Infraestrutura",
@@ -24,13 +24,14 @@ DOMAIN_PERSONA = {
     "games": "inovador",
 }
 
+# 25 por domínio = 150 total
 DOMAIN_COUNTS = {
-    "programacao": 17,
-    "infraestrutura": 17,
-    "seguranca": 17,
-    "dados": 17,
-    "design": 16,
-    "games": 16,
+    "programacao": 25,
+    "infraestrutura": 25,
+    "seguranca": 25,
+    "dados": 25,
+    "design": 25,
+    "games": 25,
 }
 
 DOMAIN_ITEMS = {
@@ -54,7 +55,12 @@ DOMAIN_ITEMS = {
         "Tenho interesse em aprender diferentes formas de resolver o mesmo problema.",
         "Gosto de combinar diferentes peças para formar um sistema completo.",
         "Me atrai a ideia de deixar um projeto bem organizado.",
-        "Tenho curiosidade em comparar abordagens para um mesmo desafio."
+        "Tenho curiosidade em comparar abordagens para um mesmo desafio.",
+        "Gosto de transformar regras em passos claros e executáveis.",
+        "Me agrada desmontar soluções grandes e montar de novo de forma melhor.",
+        "Curto criar pequenos projetos para praticar e aprender.",
+        "Gosto de comparar soluções e escolher a mais simples.",
+        "Me anima ver progresso constante em tarefas longas."
     ],
     "infraestrutura": [
         "Gosto de garantir que serviços estejam sempre disponíveis para todos.",
@@ -76,7 +82,12 @@ DOMAIN_ITEMS = {
         "Curto separar ambientes de testes e produção para evitar riscos.",
         "Gosto de criar checklists e seguir procedimentos para estabilidade.",
         "Sinto satisfação quando tudo roda sem surpresas.",
-        "Curto diagnosticar lentidão e melhorar o desempenho."
+        "Curto diagnosticar lentidão e melhorar o desempenho.",
+        "Gosto de organizar um plano de mudança com etapas seguras.",
+        "Curto medir consumo para evitar desperdícios.",
+        "Gosto de padronizar nomes e estruturas para facilitar suporte.",
+        "Me anima quando um sistema volta rápido após falha.",
+        "Prefiro rotinas previsíveis e confiáveis a improvisos."
     ],
     "seguranca": [
         "Tenho curiosidade sobre como alguém poderia burlar um sistema.",
@@ -98,7 +109,12 @@ DOMAIN_ITEMS = {
         "Gosto de manter auditorias organizadas para comprovar conformidade.",
         "Me atrai investigar a origem de um incidente.",
         "Curto comparar alternativas de proteção e escolher a mais adequada.",
-        "Gosto de revisar regularmente se há pontos de melhoria na proteção."
+        "Gosto de revisar regularmente se há pontos de melhoria na proteção.",
+        "Gosto de verificar se as pessoas têm apenas o acesso necessário.",
+        "Me interessa mapear o que é mais crítico para proteger primeiro.",
+        "Curto revisar configurações em busca de brechas.",
+        "Gosto de criar checklists para evitar erros humanos.",
+        "Me anima reduzir riscos de forma prática e contínua."
     ],
     "dados": [
         "Gosto de descobrir padrões e histórias escondidas em números.",
@@ -120,7 +136,12 @@ DOMAIN_ITEMS = {
         "Me anima trabalhar com dados do mundo real, mesmo que imperfeitos.",
         "Curto acompanhar indicadores ao longo do tempo.",
         "Gosto de ver quando uma análise muda uma decisão importante.",
-        "Tenho paciência para revisar dados até ter confiança no resultado."
+        "Tenho paciência para revisar dados até ter confiança no resultado.",
+        "Curto criar resumos que mostram o essencial sem exageros.",
+        "Gosto de validar dados antes de confiar neles.",
+        "Me anima converter perguntas abertas em análises objetivas.",
+        "Curto separar sinal de ruído em informações confusas.",
+        "Gosto de escolher gráficos que comuniquem a mensagem com clareza."
     ],
     "design": [
         "Gosto de entender a necessidade das pessoas antes de propor soluções.",
@@ -142,7 +163,12 @@ DOMAIN_ITEMS = {
         "Me interesso por tornar interfaces inclusivas e acessíveis.",
         "Curto organizar bibliotecas visuais e guias de estilo.",
         "Gosto de dar nomes claros para botões e seções.",
-        "Me anima ver pessoas usando o que eu desenhei."
+        "Me anima ver pessoas usando o que eu desenhei.",
+        "Gosto de criar padrões visuais que outras pessoas possam reutilizar.",
+        "Me anima reduzir cliques e passos desnecessários.",
+        "Curto identificar pontos de atrito e simplificar.",
+        "Gosto de ajustar espaçamentos e alinhamentos para dar conforto.",
+        "Me interesso por escrever mensagens de erro empáticas e úteis."
     ],
     "games": [
         "Gosto de imaginar mecânicas de jogo e regras divertidas.",
@@ -164,7 +190,12 @@ DOMAIN_ITEMS = {
         "Me interesso por pequenos projetos criativos feitos em pouco tempo.",
         "Curto organizar recursos de arte, som e lógica para ficarem leves.",
         "Gosto de combinar narrativa e mecânicas para criar emoções.",
-        "Me agrada trabalhar em equipe para dar vida a um jogo."
+        "Me agrada trabalhar em equipe para dar vida a um jogo.",
+        "Gosto de testar jogabilidade até ficar natural.",
+        "Me anima criar desafios que ensinam as regras jogando.",
+        "Curto equilibrar sorte e habilidade para manter a graça.",
+        "Gosto de pensar em recompensas que motivam sem exageros.",
+        "Me interesso por construir comunidades em torno de um jogo."
     ],
 }
 
@@ -174,16 +205,17 @@ def _make_questions():
     for domain, n in DOMAIN_COUNTS.items():
         items = DOMAIN_ITEMS[domain]
         if len(items) < n:
-            raise ValueError(f"Domínio {domain} precisa de {n} afirmações, possui {len(items)}.")
+            raise ValueError(f"Domínio {domain} precisa de pelo menos {n} afirmações; tem {len(items)}.")
         for i in range(n):
+            text = items[i]
             questions.append({
                 "id": next_id,
-                "text": items[i],
+                "text": text,
                 "domain": domain,
                 "persona": DOMAIN_PERSONA[domain],
             })
             next_id += 1
-    assert len(questions) == 100, f"Esperado 100 perguntas, obtido {len(questions)}"
+    assert len(questions) == 150, f"Esperado 150 perguntas, obtido {len(questions)}"
     return questions
 
 QUESTIONS = _make_questions()

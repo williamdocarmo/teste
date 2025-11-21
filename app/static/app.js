@@ -2,8 +2,18 @@ const questionCard = document.getElementById('questionCard');
 const resultsEl = document.getElementById('results');
 const progressBar = document.getElementById('progress-bar');
 const backBtn = document.getElementById('backBtn');
+const toast = document.getElementById('toast');
 
-const SCALE = {
+const urlParams = new URLSearchParams(window.location.search);
+const COMPACT = urlParams.get('compact') === '1';
+
+const SCALE = COMPACT ? {
+  1: "1",
+  2: "2",
+  3: "3",
+  4: "4",
+  5: "5",
+} : {
   1: "Nenhum Interesse",
   2: "Pouco Interesse",
   3: "Moderado",
@@ -17,11 +27,24 @@ let PERSONAS = {};
 
 let currentIndex = 0;
 const answers = new Map(); // id -> value
-const missingIds = new Set(); // perguntas faltantes
+const missingIds = new Set();
 
 function updateProgress() {
   const pct = Math.round((answers.size / QUESTIONS.length) * 100);
   progressBar.style.width = `${pct}%`;
+}
+
+function showToast(msg, type='warn') {
+  toast.textContent = msg;
+  toast.classList.remove('hidden');
+  toast.classList.toggle('warn', type === 'warn');
+  setTimeout(() => {
+    toast.classList.add('hidden');
+  }, 2500);
+}
+
+function focusCard() {
+  questionCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderCurrentQuestion() {
@@ -35,19 +58,18 @@ function renderCurrentQuestion() {
 
   const q = QUESTIONS[currentIndex];
   questionCard.classList.remove('hidden');
+  questionCard.classList.remove('warn-pulse');
   questionCard.innerHTML = '';
 
+  // Apenas contador (sem segmento/domínio na pergunta)
   const meta = document.createElement('div');
   meta.style.marginBottom = '8px';
-  meta.innerHTML = `<span class="badge">${DOMAINS[q.domain]}</span> · <span class="badge">${PERSONAS[q.persona]}</span> · <span class="badge">${currentIndex + 1}/${QUESTIONS.length}</span>`;
+  meta.innerHTML = `<span class="badge">Pergunta ${currentIndex + 1}/${QUESTIONS.length}</span>`;
   questionCard.appendChild(meta);
 
-  // Se esta pergunta está marcada como não respondida, mostra um aviso
+  // Se a pergunta estava faltando, destaca
   if (missingIds.has(q.id)) {
-    const hint = document.createElement('div');
-    hint.className = 'hint';
-    hint.textContent = 'Você pulou esta pergunta antes. Responda para continuar.';
-    questionCard.appendChild(hint);
+    questionCard.classList.add('warn-pulse');
   }
 
   const h3 = document.createElement('h3');
@@ -65,19 +87,23 @@ function renderCurrentQuestion() {
     input.value = String(v);
     input.required = true;
     const span = document.createElement('span');
-    span.textContent = `${v} — ${SCALE[v]}`;
+    span.textContent = COMPACT ? SCALE[v] : `${v} — ${SCALE[v]}`;
     label.appendChild(input);
     label.appendChild(span);
 
-    if (answers.has(q.id) && answers.get(q.id) === v) input.checked = true;
+    if (answers.has(q.id) && answers.get(q.id) === v) {
+      input.checked = true;
+    }
 
     input.addEventListener('change', () => {
       answers.set(q.id, v);
+      missingIds.delete(q.id);
       updateProgress();
       setTimeout(() => {
         currentIndex += 1;
         renderCurrentQuestion();
-      }, 90);
+        focusCard();
+      }, 120);
     });
 
     scale.appendChild(label);
@@ -85,8 +111,6 @@ function renderCurrentQuestion() {
 
   questionCard.appendChild(scale);
   backBtn.disabled = currentIndex === 0;
-  // Scroll para o topo do card quando muda
-  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 async function loadQuestions() {
@@ -97,8 +121,10 @@ async function loadQuestions() {
   PERSONAS = data.personas;
   currentIndex = 0;
   answers.clear();
+  missingIds.clear();
   updateProgress();
   renderCurrentQuestion();
+  focusCard();
 }
 
 function renderBars(container, items, title) {
@@ -163,6 +189,7 @@ function renderResults(payload) {
   `;
   resultsEl.appendChild(summary);
 
+  // Export JSON
   const jsonCard = document.createElement('div');
   jsonCard.className = 'card';
   const jsonTitle = document.createElement('h4');
@@ -193,20 +220,32 @@ function renderResults(payload) {
 
   resultsEl.appendChild(jsonCard);
 
-  window.scrollTo({ top: resultsEl.offsetTop - 20, behavior: 'smooth' });
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 async function submitQuiz() {
   const payload = [];
-  for (const q of QUESTIONS) {
+  const missing = [];
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const q = QUESTIONS[i];
     const v = answers.get(q.id);
     if (!v) {
-      alert("Há perguntas sem resposta. Use Voltar para completar.");
-      currentIndex = QUESTIONS.findIndex(qq => !answers.get(qq.id));
-      renderCurrentQuestion();
-      return;
+      missing.push({ index: i, id: q.id });
+    } else {
+      payload.push({ id: q.id, value: Number(v) });
     }
-    payload.push({ id: q.id, value: Number(v) });
+  }
+  if (missing.length) {
+    missingIds.clear();
+    missing.forEach(m => missingIds.add(m.id));
+    const first = missing[0].index;
+    currentIndex = first;
+    renderCurrentQuestion();
+    focusCard();
+    const sample = missing.slice(0, 8).map(m => m.index + 1).join(', ');
+    const rest = missing.length > 8 ? `, +${missing.length - 8}` : '';
+    showToast(`Você deixou ${missing.length} pergunta(s) sem resposta. Indo para a ${first + 1}. Faltantes: ${sample}${rest}`, 'warn');
+    return;
   }
 
   try {
@@ -217,18 +256,43 @@ async function submitQuiz() {
     });
     const scored = await res.json();
     questionCard.classList.add('hidden');
+    resultsEl.classList.remove('hidden');
     renderResults(scored);
   } catch (e) {
-    alert("Ocorreu um erro ao gerar o resultado.");
+    showToast("Ocorreu um erro ao gerar o resultado.");
     console.error(e);
   }
 }
 
+// Navegação: voltar
 backBtn.addEventListener('click', () => {
   if (currentIndex > 0) {
     currentIndex -= 1;
     renderCurrentQuestion();
+    focusCard();
   }
 });
+
+// Navegação: swipe para voltar
+let touchStartX = 0, touchStartY = 0;
+questionCard.addEventListener('touchstart', (e) => {
+  const t = e.touches[0];
+  touchStartX = t.clientX;
+  touchStartY = t.clientY;
+}, { passive: true });
+
+questionCard.addEventListener('touchend', (e) => {
+  const t = e.changedTouches[0];
+  const dx = t.clientX - touchStartX;
+  const dy = Math.abs(t.clientY - touchStartY);
+  if (dx > 50 && dy < 40) {
+    // swipe direita -> voltar
+    if (currentIndex > 0) {
+      currentIndex -= 1;
+      renderCurrentQuestion();
+      focusCard();
+    }
+  }
+}, { passive: true });
 
 loadQuestions();

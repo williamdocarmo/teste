@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, conint
 from typing import List, Dict, Any
 from .questions import QUESTIONS, DOMAIN_LABELS_PT, PERSONA_LABELS_PT
 
-app = FastAPI(title="Carreira TI - Scanner (100 perguntas, tema futurista / mobile-first)")
+app = FastAPI(title="Carreira TI - Scanner (150 perguntas, futurista, mobile)")
 
 # Servir arquivos estáticos
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
@@ -22,8 +22,8 @@ def get_questions():
 
 
 class Answer(BaseModel):
-    id: int = Field(...)
-    value: conint(ge=1, le=5) = Field(...)
+    id: int = Field(..., description="ID da pergunta")
+    value: conint(ge=1, le=5) = Field(..., description="Resposta Likert 1..5")
 
 
 class ScoreResponse(BaseModel):
@@ -37,7 +37,6 @@ class ScoreResponse(BaseModel):
 @app.post("/api/score", response_model=ScoreResponse)
 def score(answers: List[Answer]):
     q_by_id = {q["id"]: q for q in QUESTIONS}
-
     domains = {key: 0 for key in DOMAIN_LABELS_PT.keys()}
     personas = {key: 0 for key in PERSONA_LABELS_PT.keys()}
     counts_domain = {key: 0 for key in DOMAIN_LABELS_PT.keys()}
@@ -69,6 +68,7 @@ def score(answers: List[Answer]):
         key=lambda x: x["score"],
         reverse=True
     )
+
     persona_ranking = sorted(
         [{"key": k, "label": PERSONA_LABELS_PT[k], "score": persona_norm[k], "raw": personas[k], "questions": counts_persona[k]} for k in persona_norm],
         key=lambda x: x["score"],
@@ -78,7 +78,7 @@ def score(answers: List[Answer]):
     summary = {
         "top_domains": domain_ranking[:3],
         "top_persona": persona_ranking[0] if persona_ranking else None,
-        "interpretation": {"hint": "≥70% forte afinidade; 50–70% moderada; <50% explorar com calma."}
+        "interpretation": {"hint": "Acima de 70%: forte afinidade. 50–70%: moderada. <50%: explorar com calma."}
     }
 
     return ScoreResponse(
