@@ -2,36 +2,30 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <title>Questionário – Carreira em TI (100 perguntas, sem jargões)</title>
+  <title>🛰️ Carreira em TI – Scanner de Afinidades</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="/static/styles.css" />
 </head>
 <body>
+  <div class="stars"></div>
   <header class="container">
-    <h1>Questionário de Carreira em TI</h1>
-    <p>Responda <strong>100 afirmações</strong> sobre preferências e interesses (sem termos técnicos):</p>
-    <ul class="legend">
-      <li><strong>1</strong> Nenhum Interesse</li>
-      <li><strong>2</strong> Pouco Interesse</li>
-      <li><strong>3</strong> Moderado</li>
-      <li><strong>4</strong> Interessado</li>
-      <li><strong>5</strong> Muito Interessado</li>
-    </ul>
-    <div id="progress" class="progress"><div id="progress-bar"></div></div>
+    <h1>🛰️ Scanner de Afinidades • Carreira em TI</h1>
+    <p class="muted">Tema futurista · 100 afirmações · escala 1–5</p>
+    <div class="progress"><div id="progress-bar"></div></div>
   </header>
 
   <main class="container">
-    <form id="quizForm"></form>
+    <section id="questionCard" class="question card hidden"></section>
 
-    <div class="actions">
-      <button id="submitBtn" type="button">Gerar Resultado</button>
+    <div class="controls">
+      <button id="backBtn" type="button" class="ghost">← Voltar</button>
     </div>
 
     <section id="results" class="results hidden"></section>
   </main>
 
   <footer class="container">
-    <p class="muted">Acima de 70% = forte afinidade; 50–70% = moderada; abaixo de 50% = explorar com calma.</p>
+    <p class="muted">Escala: 1 Nenhum Interesse • 2 Pouco • 3 Moderado • 4 Interessado • 5 Muito Interessado</p>
   </footer>
 
   <script src="/static/app.js"></script>

@@ -1,7 +1,7 @@
-const form = document.getElementById('quizForm');
-const submitBtn = document.getElementById('submitBtn');
+const questionCard = document.getElementById('questionCard');
 const resultsEl = document.getElementById('results');
 const progressBar = document.getElementById('progress-bar');
+const backBtn = document.getElementById('backBtn');
 
 const SCALE = {
   1: "Nenhum Interesse",
@@ -15,53 +15,75 @@ let QUESTIONS = [];
 let DOMAINS = {};
 let PERSONAS = {};
 
+let currentIndex = 0;
+const answers = new Map(); // id -> value
+
 function updateProgress() {
-  const answered = [...form.querySelectorAll('input[type="radio"]:checked')].length;
-  const total = QUESTIONS.length;
-  const pct = Math.round((answered / total) * 100);
+  const pct = Math.round((answers.size / QUESTIONS.length) * 100);
   progressBar.style.width = `${pct}%`;
 }
 
-function renderQuestions() {
-  form.innerHTML = '';
-  QUESTIONS.forEach((q, idx) => {
-    const qId = `q_${q.id}`;
-    const div = document.createElement('div');
-    div.className = 'question';
+function renderCurrentQuestion() {
+  if (!QUESTIONS.length) return;
 
-    const meta = document.createElement('div');
-    meta.style.marginBottom = '6px';
-    meta.innerHTML = `<span class="badge">${DOMAINS[q.domain]}</span> · <span class="badge">${PERSONAS[q.persona]}</span>`;
-    div.appendChild(meta);
+  if (currentIndex < 0) currentIndex = 0;
+  if (currentIndex >= QUESTIONS.length) {
+    // terminou
+    submitQuiz();
+    return;
+  }
 
-    const h3 = document.createElement('h3');
-    h3.textContent = `${idx + 1}. ${q.text}`;
-    div.appendChild(h3);
+  const q = QUESTIONS[currentIndex];
+  questionCard.classList.remove('hidden');
+  questionCard.innerHTML = '';
 
-    const scale = document.createElement('div');
-    scale.className = 'scale';
+  const meta = document.createElement('div');
+  meta.style.marginBottom = '8px';
+  meta.innerHTML = `<span class="badge">${DOMAINS[q.domain]}</span> · <span class="badge">${PERSONAS[q.persona]}</span> · <span class="badge">${currentIndex + 1}/${QUESTIONS.length}</span>`;
+  questionCard.appendChild(meta);
 
-    for (let v = 1; v <= 5; v++) {
-      const label = document.createElement('label');
-      const input = document.createElement('input');
-      input.type = 'radio';
-      input.name = qId;
-      input.value = String(v);
-      input.required = true;
-      input.addEventListener('change', updateProgress);
-      const span = document.createElement('span');
-      span.textContent = `${v} — ${SCALE[v]}`;
-      label.appendChild(input);
-      label.appendChild(span);
-      scale.appendChild(label);
+  const h3 = document.createElement('h3');
+  h3.textContent = q.text;
+  questionCard.appendChild(h3);
+
+  const scale = document.createElement('div');
+  scale.className = 'scale';
+
+  for (let v = 1; v <= 5; v++) {
+    const label = document.createElement('label');
+    const input = document.createElement('input');
+    input.type = 'radio';
+    input.name = `q_${q.id}`;
+    input.value = String(v);
+    input.required = true;
+    const span = document.createElement('span');
+    span.textContent = `${v} — ${SCALE[v]}`;
+    label.appendChild(input);
+    label.appendChild(span);
+
+    // estado selecionado se já respondeu
+    if (answers.has(q.id) && answers.get(q.id) === v) {
+      input.checked = true;
     }
 
-    div.appendChild(scale);
-    form.appendChild(div);
-  });
+    // ao selecionar, salva e vai para a próxima
+    input.addEventListener('change', () => {
+      answers.set(q.id, v);
+      updateProgress();
+      // pequeno delay para feedback visual
+      setTimeout(() => {
+        currentIndex += 1;
+        renderCurrentQuestion();
+      }, 120);
+    });
 
-  updateProgress();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+    scale.appendChild(label);
+  }
+
+  questionCard.appendChild(scale);
+
+  // controles
+  backBtn.disabled = currentIndex === 0;
 }
 
 async function loadQuestions() {
@@ -70,17 +92,10 @@ async function loadQuestions() {
   QUESTIONS = data.questions;
   DOMAINS = data.domains;
   PERSONAS = data.personas;
-  renderQuestions();
-}
-
-function collectAnswers() {
-  const answers = [];
-  QUESTIONS.forEach(q => {
-    const v = form.querySelector(`input[name="q_${q.id}"]:checked`);
-    if (!v) return;
-    answers.push({ id: q.id, value: Number(v.value) });
-  });
-  return answers;
+  currentIndex = 0;
+  answers.clear();
+  updateProgress();
+  renderCurrentQuestion();
 }
 
 function renderBars(container, items, title) {
@@ -145,7 +160,7 @@ function renderResults(payload) {
   `;
   resultsEl.appendChild(summary);
 
-  // Card de exportação JSON
+  // Botão para download do JSON com o resultado completo
   const jsonCard = document.createElement('div');
   jsonCard.className = 'card';
   const jsonTitle = document.createElement('h4');
@@ -180,27 +195,41 @@ function renderResults(payload) {
 }
 
 async function submitQuiz() {
-  const answers = collectAnswers();
-  if (answers.length !== QUESTIONS.length) {
-    alert("Por favor, responda todas as perguntas antes de enviar.");
-    return;
+  // montar array [{}] na ordem das perguntas
+  const payload = [];
+  for (const q of QUESTIONS) {
+    const v = answers.get(q.id);
+    if (!v) {
+      alert("Há perguntas sem resposta. Use Voltar para completar.");
+      currentIndex = QUESTIONS.findIndex(qq => !answers.get(qq.id));
+      renderCurrentQuestion();
+      return;
+    }
+    payload.push({ id: q.id, value: Number(v) });
   }
-  submitBtn.disabled = true;
+
   try {
     const res = await fetch('/api/score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(answers)
+      body: JSON.stringify(payload)
     });
-    const payload = await res.json();
-    renderResults(payload);
+    const scored = await res.json();
+    // esconder cartão de pergunta e mostrar resultados
+    questionCard.classList.add('hidden');
+    resultsEl.classList.remove('hidden');
+    renderResults(scored);
   } catch (e) {
     alert("Ocorreu um erro ao gerar o resultado.");
     console.error(e);
-  } finally {
-    submitBtn.disabled = false;
   }
 }
 
-submitBtn.addEventListener('click', submitQuiz);
+backBtn.addEventListener('click', () => {
+  if (currentIndex > 0) {
+    currentIndex -= 1;
+    renderCurrentQuestion();
+  }
+});
+
 loadQuestions();

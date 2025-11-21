@@ -9,13 +9,13 @@ DOMAIN_LABELS_PT = {
 }
 
 PERSONA_LABELS_PT = {
-    "analista": "Analista (tendência a Dados/IA)",
+    "analista": "Analista (Dados/IA)",
     "construtor": "Construtor (Infra/Sec)",
-    "inovador": "Inovador (Programação/Games)",
+    "inovador": "Inovador (Criação/Programação)",
     "comunicador": "Comunicador (UX/Produto)",
 }
 
-# Mapeamento de persona dominante por domínio
+# Persona predominante por domínio
 DOMAIN_PERSONA = {
     "programacao": "inovador",
     "infraestrutura": "construtor",
@@ -25,7 +25,7 @@ DOMAIN_PERSONA = {
     "games": "inovador",
 }
 
-# Alocação alvo de perguntas por domínio (soma = 100)
+# Distribuição alvo (soma = 100)
 DOMAIN_COUNTS = {
     "programacao": 17,
     "infraestrutura": 17,
@@ -35,174 +35,160 @@ DOMAIN_COUNTS = {
     "games": 16,
 }
 
-# Tópicos por domínio (sem jargões; >= número desejado)
-DOMAIN_TOPICS = {
+# As afirmações abaixo assumem que a pessoa NÃO conhece termos ou ferramentas técnicas.
+# O foco é o interesse natural, preferências cognitivas e estilo de trabalho.
+DOMAIN_ITEMS = {
     "programacao": [
-        "quebrar problemas grandes em passos menores",
-        "criar soluções usando raciocínio lógico",
-        "automatizar tarefas repetitivas do dia a dia",
-        "transformar uma ideia em algo funcional",
-        "persistir até encontrar e corrigir um erro",
-        "pesquisar e testar caminhos diferentes para resolver algo",
-        "organizar instruções de forma clara para outras pessoas entenderem",
-        "aprender novas formas de pensar e resolver problemas",
-        "construir pequenas ferramentas para facilitar a rotina",
-        "estruturar soluções que possam ser reaproveitadas",
-        "pensar em eficiência e fazer mais com menos recursos",
-        "manter um estilo claro e consistente nas soluções",
-        "colaborar revisando o trabalho de outras pessoas",
-        "verificar se uma solução continua funcionando após mudanças",
-        "documentar o funcionamento de uma solução",
-        "traduzir regras do negócio em regras lógicas",
-        "integrar partes diferentes de um sistema",
-        "projetar soluções que sejam fáceis de manter",
-        "lidar bem com ambiguidade até chegar a uma resposta",
-        "refatorar soluções para ficarem mais simples",
+        "Eu me animo em criar algo do zero que funcione na tela.",
+        "Gosto de resolver quebra-cabeças lógicos passo a passo.",
+        "Sinto satisfação em automatizar tarefas repetitivas.",
+        "Curto transformar ideias em funcionalidades concretas.",
+        "Tenho paciência para tentar diferentes soluções quando algo não funciona.",
+        "Gosto de melhorar algo para ficar mais rápido e eficiente.",
+        "Acho divertido organizar um problema em pequenas partes.",
+        "Gosto de ver testes passando e sentir que tudo está no lugar.",
+        "Prefiro atividades que exigem lógica e criatividade ao mesmo tempo.",
+        "Me interesso em entender por que um erro aconteceu e corrigi-lo.",
+        "Gosto de estruturar meu trabalho em pequenas funções bem definidas.",
+        "Curto revisar meu próprio trabalho e melhorar a qualidade dele.",
+        "Me empolgo com desafios que pedem persistência.",
+        "Gosto de seguir padrões e boas práticas quando crio algo.",
+        "Sinto prazer em ver algo que construí funcionando para outras pessoas.",
+        "Gosto de explicar como uma solução foi estruturada.",
+        "Tenho interesse em aprender diferentes formas de resolver o mesmo problema.",
+        "Gosto de combinar diferentes peças para formar um sistema completo.",
+        "Me atrai a ideia de deixar um projeto bem organizado.",
+        "Tenho curiosidade em comparar abordagens para um mesmo desafio."
     ],
     "infraestrutura": [
-        "garantir que serviços fiquem disponíveis o tempo todo",
-        "planejar capacidade e crescimento com antecedência",
-        "padronizar processos para reduzir erros",
-        "observar sinais de saúde e desempenho de serviços",
-        "organizar quem pode acessar o quê",
-        "resolver incidentes de forma rápida e calma",
-        "criar rotinas de cópia e recuperação de informações",
-        "otimizar custos de operação sem perder qualidade",
-        "preparar ambientes de teste e de produção",
-        "automatizar instalações e configurações repetitivas",
-        "mapear dependências entre serviços e equipes",
-        "trabalhar com registros e monitoramento para entender problemas",
-        "atualizar sistemas sem interromper quem usa",
-        "pensar em soluções que suportem alto uso",
-        "lidar com limitações de tempo e recursos",
-        "preparar documentação operacional objetiva",
-        "reduzir riscos humanos com automação e padrões",
-        "separar ambientes para evitar impactos indesejados",
-        "facilitar diagnósticos com bons registros",
-        "garantir que mudanças passem por etapas de validação",
+        "Gosto de garantir que serviços estejam sempre disponíveis para todos.",
+        "Me agrada entender como várias partes se conectam nos bastidores.",
+        "Curto investigar problemas de conexão e disponibilidade.",
+        "Gosto de planejar como um sistema pode crescer sem quebrar.",
+        "Prefiro rotinas com padronização e documentação clara.",
+        "Me sinto bem criando rotinas que tornam operações mais estáveis.",
+        "Gosto de acompanhar indicadores de saúde de um sistema.",
+        "Tenho paciência para descobrir a causa raiz de falhas.",
+        "Curto trabalhar com ambientes que exigem confiabilidade.",
+        "Gosto de pensar em como recuperar um serviço rapidamente após um problema.",
+        "Me interesso por organizar rotinas de cópias de segurança.",
+        "Curto lidar com linha de comando e sistemas operacionais.",
+        "Gosto de prever capacidade para evitar gargalos.",
+        "Curto padronizar formas de instalar e publicar serviços.",
+        "Gosto de tornar o trabalho repetitivo automatizado.",
+        "Me preocupo em manter custos e recursos sob controle.",
+        "Curto separar ambientes de testes e produção para evitar riscos.",
+        "Gosto de criar checklists e seguir procedimentos para estabilidade.",
+        "Sinto satisfação quando tudo roda sem surpresas.",
+        "Curto diagnosticar lentidão e melhorar o desempenho."
     ],
     "seguranca": [
-        "imaginar como algo pode falhar ou ser abusado",
-        "identificar riscos antes que se tornem problemas",
-        "definir regras e controles para reduzir riscos",
-        "investigar sinais que indicam incidentes",
-        "proteger informações sensíveis e confidenciais",
-        "avaliar impacto e probabilidade para priorizar ações",
-        "criar hábitos e treinamentos de segurança para pessoas",
-        "revisar mudanças com olhar crítico",
-        "manter sigilo e ética em situações sensíveis",
-        "pensar em camadas de defesa e redundância",
-        "responder a incidentes de forma coordenada",
-        "analisar comportamentos fora do padrão",
-        "preparar checklists e evidências para auditorias",
-        "acompanhar notícias e tendências de riscos",
-        "garantir acesso apenas ao necessário",
-        "incluir segurança desde o início de um projeto",
-        "registrar decisões importantes para referência futura",
-        "propor melhorias contínuas baseadas em lições aprendidas",
-        "questionar suposições que possam abrir brechas",
-        "priorizar correções com base em risco real",
+        "Tenho curiosidade sobre como alguém poderia burlar um sistema.",
+        "Gosto de pensar em formas de proteger contas e informações.",
+        "Me interesso em seguir regras e políticas para manter tudo seguro.",
+        "Curto procurar pontos fracos antes que outras pessoas os encontrem.",
+        "Gosto de investigar sinais de atividades suspeitas.",
+        "Me preocupo com privacidade e uso correto de informações.",
+        "Curto analisar riscos e propor medidas de proteção.",
+        "Gosto de revisar acessos e garantir que só o necessário está liberado.",
+        "Tenho interesse em criar hábitos seguros no dia a dia.",
+        "Curto simular cenários de ataque para aprender a defender.",
+        "Gosto de documentar orientações para evitar incidentes.",
+        "Me atento aos detalhes quando se trata de proteção.",
+        "Curto avaliar o impacto de um problema e como responder rapidamente.",
+        "Gosto de pensar em segurança desde o início de um projeto.",
+        "Me interesso em checar se regras e controles estão funcionando.",
+        "Curto ensinar outras pessoas a usar a tecnologia com segurança.",
+        "Gosto de manter auditorias organizadas para comprovar conformidade.",
+        "Me atrai investigar a origem de um incidente.",
+        "Curto comparar alternativas de proteção e escolher a mais adequada.",
+        "Gosto de revisar regularmente se há pontos de melhoria na proteção."
     ],
     "dados": [
-        "gostar de trabalhar com números e informações",
-        "encontrar padrões em grandes quantidades de dados",
-        "fazer perguntas e medir as respostas",
-        "transformar dados em gráficos e resumos claros",
-        "validar se uma conclusão é confiável",
-        "testar hipóteses e comparar resultados",
-        "comparar cenários para tomar decisões",
-        "contar histórias a partir de informações",
-        "reunir dados de fontes diferentes",
-        "definir métricas com nomes e regras bem claras",
-        "cuidar da qualidade e consistência das informações",
-        "investigar causas de variações inesperadas",
-        "revisar detalhes com atenção e paciência",
-        "usar dados para orientar prioridades",
-        "estimar resultados futuros com base no passado",
-        "documentar a origem dos dados e quem os usa",
-        "respeitar privacidade e regras ao analisar informações",
-        "simplificar análises complexas para públicos não técnicos",
-        "construir painéis que comunicam o essencial",
-        "apoiar decisões de negócio com evidências",
+        "Gosto de descobrir padrões e histórias escondidas em números.",
+        "Me interesso por criar gráficos que expliquem uma situação.",
+        "Curto responder perguntas usando evidências e dados.",
+        "Gosto de organizar informações bagunçadas até fazerem sentido.",
+        "Tenho curiosidade em testar hipóteses e ver o que os dados mostram.",
+        "Curto medir impacto e comparar resultados de antes e depois.",
+        "Gosto de explicar descobertas de forma simples para qualquer pessoa.",
+        "Me agrada trabalhar com tabelas e planilhas.",
+        "Curto explorar diferentes formas de visualizar um mesmo conjunto de dados.",
+        "Gosto de buscar a causa principal por trás de um comportamento.",
+        "Tenho interesse em aprender como máquinas podem reconhecer padrões.",
+        "Curto avaliar a qualidade das informações antes de tomar decisões.",
+        "Gosto de transformar perguntas vagas em métricas claras.",
+        "Me interesso por processos para coletar e organizar informações.",
+        "Curto experimentar modelos e comparar desempenho.",
+        "Gosto de avaliar riscos e incertezas usando probabilidades.",
+        "Me anima trabalhar com dados do mundo real, mesmo que imperfeitos.",
+        "Curto acompanhar indicadores ao longo do tempo.",
+        "Gosto de ver quando uma análise muda uma decisão importante.",
+        "Tenho paciência para revisar dados até ter confiança no resultado."
     ],
     "design": [
-        "entender necessidades reais das pessoas usuárias",
-        "valorizar estética simples e funcional",
-        "prototipar ideias rapidamente no papel ou ferramenta",
-        "organizar telas e fluxos de forma clara",
-        "escrever textos curtos que orientam",
-        "testar com pessoas e melhorar a cada ciclo",
-        "manter consistência visual entre telas",
-        "pensar em acessibilidade para diferentes públicos",
-        "adaptar a experiência para celular e computador",
-        "usar feedback de pessoas usuárias como principal guia",
-        "desenhar jornadas do início ao fim",
-        "colaborar com produto e engenharia",
-        "criar componentes reutilizáveis",
-        "priorizar clareza sobre decoração",
-        "medir satisfação e esforço das pessoas usuárias",
-        "explicar decisões de design com argumentos simples",
-        "reduzir atrito em tarefas repetidas",
-        "evitar sobrecarga de informação nas telas",
-        "definir hierarquia visual para orientar a leitura",
-        "pensar no estado vazio e mensagens de erro",
+        "Gosto de entender a necessidade das pessoas antes de propor soluções.",
+        "Me agrada criar telas bonitas e fáceis de usar.",
+        "Curto transformar ideias em protótipos rápidos para testar.",
+        "Gosto de escrever textos curtos e claros dentro de uma interface.",
+        "Me interesso por manter consistência visual entre diferentes telas.",
+        "Curto garantir que qualquer pessoa consiga usar, inclusive com limitações.",
+        "Gosto de observar como as pessoas interagem e aprender com isso.",
+        "Me anima organizar componentes reutilizáveis para ganhar velocidade.",
+        "Curto alinhar estética e funcionalidade no mesmo projeto.",
+        "Gosto de validar ideias com testes simples e feedback real.",
+        "Me interesso por tipografia e uso de espaço em tela.",
+        "Curto pensar no primeiro contato do usuário com o produto.",
+        "Gosto de simplificar fluxos complexos em passos claros.",
+        "Me agrada documentar decisões para outras pessoas seguirem.",
+        "Curto criar experiências consistentes em diferentes dispositivos.",
+        "Gosto de equilibrar requisitos do negócio e necessidades do usuário.",
+        "Me interesso por tornar interfaces inclusivas e acessíveis.",
+        "Curto organizar bibliotecas visuais e guias de estilo.",
+        "Gosto de dar nomes claros para botões e seções.",
+        "Me anima ver pessoas usando o que eu desenhei."
     ],
     "games": [
-        "imaginar regras e mecânicas divertidas",
-        "equilibrar dificuldade e progressão",
-        "criar experiências que prendem atenção",
-        "experimentar protótipos rapidamente",
-        "ajustar feedbacks visuais e sonoros",
-        "pensar em histórias e personagens marcantes",
-        "analisar por que um jogo é divertido",
-        "buscar sensação de fluidez durante a experiência",
-        "trabalhar com ideias abstratas e criatividade",
-        "equilibrar risco e recompensa para motivar",
-        "projetar níveis interessantes",
-        "considerar experiências para jogar junto",
-        "planejar novidades por temporadas ou eventos",
-        "acompanhar tendências do mercado de jogos",
-        "pensar em monetização justa e ética",
-        "lidar com comunidade e feedback após o lançamento",
-        "refinar controles para que sejam naturais",
-        "criar desafios que ensinam sem frustrar",
-        "medir engajamento e melhorar com base nos dados",
-        "inovar em mecânicas mesmo com limitações",
+        "Gosto de imaginar mecânicas de jogo e regras divertidas.",
+        "Me agrada pensar em desafios que evoluem de forma justa.",
+        "Curto prototipar rapidamente uma ideia e testar com amigos.",
+        "Gosto de criar histórias, personagens e mundos.",
+        "Me interesso por equilibrar dificuldade e sensação de progresso.",
+        "Curto ajustar elementos para que o jogo seja fluido.",
+        "Gosto de pensar em comportamentos de personagens controlados pelo computador.",
+        "Me anima criar efeitos visuais e sonoros que aumentam a imersão.",
+        "Curto coletar feedback de jogadores e melhorar a experiência.",
+        "Gosto de pensar em como jogar com outras pessoas online ou localmente.",
+        "Me interesso por recompensas e sistemas de progressão.",
+        "Curto planejar fases e caminhos alternativos.",
+        "Gosto de otimizar para que o jogo rode bem em diferentes dispositivos.",
+        "Me anima publicar algo e ver outras pessoas jogando.",
+        "Curto manter e balancear o jogo após o lançamento.",
+        "Gosto de estudar por que certos jogos prendem a atenção.",
+        "Me interesso por pequenos projetos criativos feitos em pouco tempo.",
+        "Curto organizar recursos de arte, som e lógica para ficarem leves.",
+        "Gosto de combinar narrativa e mecânicas para criar emoções.",
+        "Me agrada trabalhar em equipe para dar vida a um jogo."
     ],
 }
 
-# Frases-base para variar a redação
-PREFIXES = [
-    "Tenho interesse em {}.",
-    "Gosto de {}.",
-    "Me motiva {}.",
-    "Quero aprender mais sobre {}.",
-    "Tenho curiosidade em {}.",
-    "Aprecio {}.",
-    "Me atrai {}.",
-    "Pretendo praticar {}.",
-]
-
 def _make_questions():
+    # Seleciona as primeiras N afirmações de cada domínio conforme DOMAIN_COUNTS.
     questions = []
     next_id = 1
-    for domain, count in DOMAIN_COUNTS.items():
-        topics = DOMAIN_TOPICS[domain]
-        if len(topics) < count:
-            raise ValueError(f"Domínio '{domain}' precisa de pelo menos {count} tópicos; tem {len(topics)}.")
-        # usar primeiros 'count' tópicos
-        for i in range(count):
-            topic = topics[i]
-            prefix = PREFIXES[i % len(PREFIXES)]
-            text = prefix.format(topic)
+    for domain, n in DOMAIN_COUNTS.items():
+        items = DOMAIN_ITEMS[domain]
+        if len(items) < n:
+            raise ValueError(f"Domínio {domain} precisa de pelo menos {n} afirmações; tem {len(items)}.")
+        for i in range(n):
+            text = items[i]
             questions.append({
                 "id": next_id,
-                "text": text[0].upper() + text[1:],  # capitalizar
+                "text": text,
                 "domain": domain,
                 "persona": DOMAIN_PERSONA[domain],
             })
             next_id += 1
-    # garantir 100 perguntas
     assert len(questions) == 100, f"Esperado 100 perguntas, obtido {len(questions)}"
     return questions
 
