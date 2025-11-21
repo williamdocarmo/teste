@@ -17,14 +17,11 @@ let PERSONAS = {};
 
 let currentIndex = 0;
 const answers = new Map(); // id -> value
+const missingIds = new Set(); // perguntas faltantes
 
 function updateProgress() {
   const pct = Math.round((answers.size / QUESTIONS.length) * 100);
   progressBar.style.width = `${pct}%`;
-}
-
-function focusCard() {
-  questionCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function renderCurrentQuestion() {
@@ -42,8 +39,16 @@ function renderCurrentQuestion() {
 
   const meta = document.createElement('div');
   meta.style.marginBottom = '8px';
-  meta.innerHTML = `<span class="badge">${DOMAINS[q.domain]}</span> <span class="badge">${PERSONAS[q.persona]}</span> <span class="badge">${currentIndex + 1}/${QUESTIONS.length}</span>`;
+  meta.innerHTML = `<span class="badge">${DOMAINS[q.domain]}</span> · <span class="badge">${PERSONAS[q.persona]}</span> · <span class="badge">${currentIndex + 1}/${QUESTIONS.length}</span>`;
   questionCard.appendChild(meta);
+
+  // Se esta pergunta está marcada como não respondida, mostra um aviso
+  if (missingIds.has(q.id)) {
+    const hint = document.createElement('div');
+    hint.className = 'hint';
+    hint.textContent = 'Você pulou esta pergunta antes. Responda para continuar.';
+    questionCard.appendChild(hint);
+  }
 
   const h3 = document.createElement('h3');
   h3.textContent = q.text;
@@ -64,9 +69,7 @@ function renderCurrentQuestion() {
     label.appendChild(input);
     label.appendChild(span);
 
-    if (answers.has(q.id) && answers.get(q.id) === v) {
-      input.checked = true;
-    }
+    if (answers.has(q.id) && answers.get(q.id) === v) input.checked = true;
 
     input.addEventListener('change', () => {
       answers.set(q.id, v);
@@ -74,8 +77,7 @@ function renderCurrentQuestion() {
       setTimeout(() => {
         currentIndex += 1;
         renderCurrentQuestion();
-        focusCard();
-      }, 120);
+      }, 90);
     });
 
     scale.appendChild(label);
@@ -83,6 +85,8 @@ function renderCurrentQuestion() {
 
   questionCard.appendChild(scale);
   backBtn.disabled = currentIndex === 0;
+  // Scroll para o topo do card quando muda
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 async function loadQuestions() {
@@ -95,7 +99,6 @@ async function loadQuestions() {
   answers.clear();
   updateProgress();
   renderCurrentQuestion();
-  focusCard();
 }
 
 function renderBars(container, items, title) {
@@ -160,7 +163,6 @@ function renderResults(payload) {
   `;
   resultsEl.appendChild(summary);
 
-  // Export JSON
   const jsonCard = document.createElement('div');
   jsonCard.className = 'card';
   const jsonTitle = document.createElement('h4');
@@ -191,7 +193,7 @@ function renderResults(payload) {
 
   resultsEl.appendChild(jsonCard);
 
-  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  window.scrollTo({ top: resultsEl.offsetTop - 20, behavior: 'smooth' });
 }
 
 async function submitQuiz() {
@@ -202,7 +204,6 @@ async function submitQuiz() {
       alert("Há perguntas sem resposta. Use Voltar para completar.");
       currentIndex = QUESTIONS.findIndex(qq => !answers.get(qq.id));
       renderCurrentQuestion();
-      focusCard();
       return;
     }
     payload.push({ id: q.id, value: Number(v) });
@@ -216,7 +217,6 @@ async function submitQuiz() {
     });
     const scored = await res.json();
     questionCard.classList.add('hidden');
-    resultsEl.classList.remove('hidden');
     renderResults(scored);
   } catch (e) {
     alert("Ocorreu um erro ao gerar o resultado.");
@@ -228,7 +228,6 @@ backBtn.addEventListener('click', () => {
   if (currentIndex > 0) {
     currentIndex -= 1;
     renderCurrentQuestion();
-    focusCard();
   }
 });
 

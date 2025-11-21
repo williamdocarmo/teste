@@ -1,4 +1,4 @@
-# Rótulos
+# Rótulos de categorias (PT)
 DOMAIN_LABELS_PT = {
     "programacao": "Programação",
     "infraestrutura": "Infraestrutura",
@@ -174,12 +174,11 @@ def _make_questions():
     for domain, n in DOMAIN_COUNTS.items():
         items = DOMAIN_ITEMS[domain]
         if len(items) < n:
-            raise ValueError(f"Domínio {domain} precisa de pelo menos {n} afirmações; tem {len(items)}.")
+            raise ValueError(f"Domínio {domain} precisa de {n} afirmações, possui {len(items)}.")
         for i in range(n):
-            text = items[i]
             questions.append({
                 "id": next_id,
-                "text": text,
+                "text": items[i],
                 "domain": domain,
                 "persona": DOMAIN_PERSONA[domain],
             })
